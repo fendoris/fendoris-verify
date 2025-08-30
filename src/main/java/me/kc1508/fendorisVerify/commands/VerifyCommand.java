@@ -6,10 +6,14 @@ import me.kc1508.fendorisVerify.service.VerifyService;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public final class VerifyCommand implements CommandExecutor {
+import java.util.Collections;
+import java.util.List;
+
+public final class VerifyCommand implements CommandExecutor, TabCompleter {
     private final VerifyService verify;
     private final MessageService messages;
     private final ApplicationService applications;
@@ -27,9 +31,19 @@ public final class VerifyCommand implements CommandExecutor {
             return true;
         }
 
-        messages.send(p, verify.isVerified(p) ? "verify_already" : "verify_info");
+        if (verify.isVerified(p)) {
+            messages.send(p, "verify_already");
+            return true;
+        }
+
+        messages.send(p, "verify_info");
         messages.send(p, "verify_next_section");
         applications.markSeenRules(p);
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String @NotNull [] args) {
+        return Collections.emptyList(); // no suggestions, no player names
     }
 }

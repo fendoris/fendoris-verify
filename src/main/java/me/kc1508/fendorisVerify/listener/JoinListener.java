@@ -23,11 +23,23 @@ public final class JoinListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent e) {
+        // Operator bypass: auto-verify on join
+        if (e.getPlayer().isOp() && !verify.isVerified(e.getPlayer())) {
+            verify.setVerified(e.getPlayer(), true);
+            verify.enforceState(e.getPlayer());
+            return;
+        }
+
+        // Non-ops: ensure spectator if unverified and show message after a tick
         if (!verify.isVerified(e.getPlayer())) {
+            plugin.getServer().getScheduler().runTask(plugin, () -> verify.enforceState(e.getPlayer()));
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> messages.send(e.getPlayer(), "unverified_join"), 1L);
         } else {
+            // Verified: keep survival unless operator doing admin work
             verify.enforceState(e.getPlayer());
         }
+
+        // Prompt ops for offline apps
         applications.maybePromptOpsOnJoin(e.getPlayer());
     }
 }

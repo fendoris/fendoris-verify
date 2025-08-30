@@ -4,11 +4,7 @@ import me.kc1508.fendorisVerify.store.ApplicationsStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ApplicationService {
@@ -18,14 +14,12 @@ public final class ApplicationService {
     private final VerifyService verifyService;
     private final MessageService messages;
 
-    // Players who ran /verify this session
     private final Set<UUID> seenRules = ConcurrentHashMap.newKeySet();
 
     public static final class Session {
         public int idx = 0;
         public final String[] answers = new String[TOTAL_QUESTIONS];
     }
-
     private final Map<UUID, Session> sessions = new ConcurrentHashMap<>();
     private final Map<UUID, Integer> reviewIndex = new ConcurrentHashMap<>();
 
@@ -35,40 +29,17 @@ public final class ApplicationService {
         this.messages = messages;
     }
 
-    public void markSeenRules(Player p) {
-        seenRules.add(p.getUniqueId());
-    }
-
-    public boolean canApply(Player p) {
-        return seenRules.contains(p.getUniqueId());
-    }
-
-    public boolean isApplying(Player p) {
-        return sessions.containsKey(p.getUniqueId());
-    }
-
-    public boolean hasReviewSession(Player op) {
-        return reviewIndex.containsKey(op.getUniqueId());
-    }
+    public void markSeenRules(Player p) { seenRules.add(p.getUniqueId()); }
+    public boolean canApply(Player p) { return seenRules.contains(p.getUniqueId()); }
+    public boolean isApplying(Player p) { return sessions.containsKey(p.getUniqueId()); }
+    public boolean hasReviewSession(Player op) { return reviewIndex.containsKey(op.getUniqueId()); }
 
     public boolean startApplication(Player p) {
-        if (verifyService.isVerified(p)) {
-            messages.send(p, "apply_already_verified");
-            return false;
-        }
-        if (!canApply(p)) {
-            messages.send(p, "apply_must_view_rules_first");
-            return false;
-        }
+        if (verifyService.isVerified(p)) { messages.send(p, "apply_already_verified"); return false; }
+        if (!canApply(p)) { messages.send(p, "apply_must_view_rules_first"); return false; }
         UUID id = p.getUniqueId();
-        if (storage.hasPending(id)) {
-            messages.send(p, "apply_already_submitted");
-            return false;
-        }
-        if (storage.isDenied(id)) {
-            messages.send(p, "apply_denied_cannot_resubmit");
-            return false;
-        }
+        if (storage.hasPending(id)) { messages.send(p, "apply_already_submitted"); return false; }
+        if (storage.isDenied(id)) { messages.send(p, "apply_denied_cannot_resubmit"); return false; }
         sessions.put(id, new Session());
         sendPrompt(p);
         return true;
@@ -91,18 +62,12 @@ public final class ApplicationService {
         Session s = sessions.get(p.getUniqueId());
         if (s == null) return;
         String t = msg.trim();
-        if (t.equalsIgnoreCase("stop") || t.equalsIgnoreCase("cancel")) {
-            cancelApplication(p);
-            return;
-        }
-        if (t.equalsIgnoreCase("last")) {
-            goBack(p);
-            return;
-        }
+        if (t.equalsIgnoreCase("stop") || t.equalsIgnoreCase("cancel")) { cancelApplication(p); return; }
+        if (t.equalsIgnoreCase("last")) { goBack(p); return; }
         s.answers[s.idx] = msg;
         s.idx++;
         if (s.idx >= TOTAL_QUESTIONS) {
-            Map<String, String> answers = new LinkedHashMap<>();
+            Map<String,String> answers = new LinkedHashMap<>();
             answers.put("q1_age", s.answers[0]);
             answers.put("q2_goal", s.answers[1]);
             answers.put("q3_agree_rules", s.answers[2]);
@@ -113,8 +78,7 @@ public final class ApplicationService {
             sessions.remove(p.getUniqueId());
             messages.send(p, anyOpOnline ? "apply_submitted" : "apply_no_ops_online");
             if (anyOpOnline) {
-                for (Player op : Bukkit.getOnlinePlayers())
-                    if (op.isOp()) sendApplicationToOperator(op, p.getUniqueId());
+                for (Player op : Bukkit.getOnlinePlayers()) if (op.isOp()) sendApplicationToOperator(op, p.getUniqueId());
             }
             return;
         }
@@ -137,7 +101,8 @@ public final class ApplicationService {
     public void sendApplicationToOperator(Player op, UUID applicant) {
         Map<String, Object> data = storage.getPending(applicant);
         if (data == null) return;
-        @SuppressWarnings("unchecked") Map<String, Object> answers = (Map<String, Object>) data.get("answers");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> answers = (Map<String, Object>) data.get("answers");
         Map<String, String> ph = new LinkedHashMap<>();
         ph.put("player", (String) data.get("name"));
         ph.put("q1", String.valueOf(answers.get("q1_age")));
@@ -155,6 +120,7 @@ public final class ApplicationService {
     }
 
     public void accept(String playerName) {
+        // Try to resolve from pending first
         List<Map<String, Object>> pending = storage.listPendingOrdered();
         UUID target = null;
         for (Map<String, Object> e : pending) {
@@ -163,8 +129,10 @@ public final class ApplicationService {
                 break;
             }
         }
-        if (target == null) return;
-        storage.removePending(target);
+        if (target != null) {
+            storage.removePending(target);
+        }
+        // Accept regardless of pending presence
         verifyService.setVerified(playerName, true);
         Player p = Bukkit.getPlayerExact(playerName);
         if (p != null) {
