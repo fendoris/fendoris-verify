@@ -8,7 +8,6 @@ import me.kc1508.fendorisVerify.listener.CommandBlockListener;
 import me.kc1508.fendorisVerify.listener.GameModeGuardListener;
 import me.kc1508.fendorisVerify.listener.JoinListener;
 import me.kc1508.fendorisVerify.listener.MoveLimitListener;
-import me.kc1508.fendorisVerify.listener.SpectateGuardListener;
 import me.kc1508.fendorisVerify.service.ConfigService;
 import me.kc1508.fendorisVerify.service.MessageService;
 import me.kc1508.fendorisVerify.service.VerifyService;
@@ -46,6 +45,8 @@ public final class FendorisVerify extends JavaPlugin {
         PluginCommand verify = getCommand("verify");
         if (verify != null) {
             verify.setExecutor(verifyCmd);
+            // Disable ALL suggestions for /verify by supplying an empty TabCompleter
+            verify.setTabCompleter(verifyCmd);
         } else {
             getLogger().severe("Command 'verify' missing from plugin.yml");
         }
@@ -78,7 +79,6 @@ public final class FendorisVerify extends JavaPlugin {
         pm.registerEvents(new MoveLimitListener(configService, verifyService, messages), this);
         pm.registerEvents(new CommandBlockListener(verifyService, messages), this);
         pm.registerEvents(new GameModeGuardListener(verifyService), this);
-        pm.registerEvents(new SpectateGuardListener(verifyService, messages), this);
     }
 
     @Override

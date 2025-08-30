@@ -5,10 +5,14 @@ import me.kc1508.fendorisVerify.service.VerifyService;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public final class VerifyCommand implements CommandExecutor {
+import java.util.Collections;
+import java.util.List;
+
+public final class VerifyCommand implements CommandExecutor, TabCompleter {
     private final VerifyService verify;
     private final MessageService messages;
 
@@ -25,27 +29,23 @@ public final class VerifyCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            if (verify.isVerified(p)) {
-                messages.send(p, "verify_already");
-            } else {
-                messages.send(p, "verify_info");
-            }
+            messages.send(p, "verify_info");
             return true;
         }
-
         if (args.length == 1 && args[0].equalsIgnoreCase("me")) {
-            if (verify.isVerified(p)) {
-                messages.send(p, "verify_cannot_reverify");
-                return true;
-            }
             verify.setVerified(p, true);
             messages.send(p, "verify_success");
             verify.enforceState(p);
             verify.teleportToSpectatorSpawn(p);
             return true;
         }
-
         messages.send(p, "verify_incorrect");
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String @NotNull [] args) {
+        // Empty list disables any suggestions, including player names.
+        return Collections.emptyList();
     }
 }
