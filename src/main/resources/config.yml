@@ -1,5 +1,6 @@
 # fendoris-verify configuration
 
+# Spectator confinement removed. Keep spawn to teleport on accept.
 spectator-radius: 0
 
 spectator-spawn:
@@ -11,29 +12,39 @@ spectator-spawn:
   pitch: 0.0
 
 messages:
+  # Unverified join
   unverified_join: "<gray>You are <red>unverified</red>. Use <green>/verify</green> to read the rules and start the application.</gray>"
 
+  # Verify flow
   verify_info: "<yellow>Server rules:</yellow><newline><gray>1) Be respectful.<newline>2) No cheating.<newline>3) Follow staff instructions.</gray>"
   verify_already: "<green>You are already verified.</green>"
   verify_next_section: "<gray>Next Section:</gray> <green>/apply</green> to begin the short application."
 
+  # Application prompts
   apply_must_view_rules_first: "<red>You must run /verify first to view the rules.</red>"
   apply_already_verified: "<green>You are already verified. No application needed.</green>"
   apply_already_submitted: "<yellow>You already submitted an application. Please wait for review.</yellow>"
   apply_denied_cannot_resubmit: "<red>Your previous application was denied. You cannot resubmit right now.</red>"
 
+  apply_nav: "<gray>Type your answer. Type <yellow>last</yellow> to go back, <red>stop</red> to cancel.</gray>"
   apply_q1: "<gray>Question 1:</gray> How old are you?"
   apply_q2: "<gray>Question 2:</gray> What is your goal playing on our server?"
   apply_q3: "<gray>Question 3:</gray> Do you understand the rules and agree to them?"
   apply_q4: "<gray>Question 4:</gray> Have you ever been banned from a Minecraft Server before?"
   apply_q5: "<gray>Question 5:</gray> Give us the password you read earlier. <i>Once entered your application will be submitted.</i>"
-  apply_nav: "<gray>Type your answer. Type <yellow>last</yellow> to go back, <red>stop</red> to cancel.</gray>"
   apply_cancelled: "<yellow>Application cancelled.</yellow>"
   apply_submitted: "<green>Application submitted. A staff member will review it shortly.</green>"
   apply_no_ops_online: "<yellow>No operator is online. Your application was saved. A staff member will review it within 3 days.</yellow>"
+  apply_in_progress: "<red>You are currently completing an application. Answer the question or type <yellow>last</yellow> or <yellow>stop</yellow>.</red>"
+
+  # Acceptance
   apply_accepted_player: "<green>Your application was accepted. Welcome!</green>"
+  apply_accepted_broadcast: "<green>%player%</green> has been verified. Welcome!"
+
+  # Denial
   apply_denied_player: "<red>Your application was denied.</red>"
 
+  # Application formatted view to operators
   apply_format_header: "<gray>New application from <yellow>%player%</yellow>:</gray>"
   apply_format_q1: "<gray>Age:</gray> <white>%q1%</white>"
   apply_format_q2: "<gray>Goal:</gray> <white>%q2%</white>"
@@ -42,16 +53,23 @@ messages:
   apply_format_q5: "<gray>Password:</gray> <white>%q5%</white>"
   apply_format_footer: "<gray>Use <green>/applyaccept %player%</green> or <red>/applydeny %player%</red>.</gray>"
 
+  # Offline review
   apply_offline_prompt_to_op: "<yellow>There are <white>%count%</white> pending application(s). Run <green>/applyseeoffline</green> to review.</yellow>"
   apply_review_next_hint: "<gray>Accept with <green>/applyaccept <player></green> or deny with <red>/applydeny <player></red>. Type <yellow>/applyseeoffline stop</yellow> to stop.</gray>"
   apply_review_stopped: "<yellow>Review session stopped.</yellow>"
   apply_review_finished: "<green>No more pending applications.</green>"
 
+  # Operator feedback
   apply_accepted_operator: "<green>Accepted.</green>"
   apply_deny_usage: "<gray>Usage:</gray> <yellow>/applydeny <player></yellow>"
   apply_accept_usage: "<gray>Usage:</gray> <yellow>/applyaccept <player></yellow>"
   apply_denied_operator: "<red>Denied.</red>"
+  apply_reset_usage: "<gray>Usage:</gray> <yellow>/applyreset <player></yellow>"
+  apply_reset_not_denied: "<red>That player is not denied or has no denial to reset.</red>"
+  apply_reset_done_operator: "<green>Reset. The player may apply again.</green>"
+  apply_reset_done_player: "<yellow>Your denial was cleared. You may apply again with /verify then /apply.</yellow>"
 
+  # Existing messages
   unverify_done_operator: "<gray>Set <yellow>%target%</yellow> unverified. Last location: <white>%x% %y% %z%</white> in <white>%world%</white>.</gray>"
   unverify_notified_player: "<red>You were set to unverified by an operator.</red>"
   unverify_not_found: "<red>User <white>%target%</white> does not exist or has no verification record.</red>"

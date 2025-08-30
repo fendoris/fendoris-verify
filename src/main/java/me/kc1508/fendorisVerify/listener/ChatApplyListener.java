@@ -1,6 +1,7 @@
 package me.kc1508.fendorisVerify.listener;
 
 import me.kc1508.fendorisVerify.service.ApplicationService;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -15,9 +16,13 @@ public final class ChatApplyListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent e) {
-        if (!applications.isApplying(e.getPlayer())) return;
-        e.setCancelled(true);
-        e.getPlayer().getServer().getScheduler().runTask(e.getPlayer().getServer().getPluginManager().getPlugin("fendoris-verify"),
-                () -> applications.handleChat(e.getPlayer(), e.getMessage()));
+        Player sender = e.getPlayer();
+        if (applications.isApplying(sender)) {
+            e.setCancelled(true);
+            sender.getServer().getScheduler().runTask(sender.getServer().getPluginManager().getPlugin("fendoris-verify"),
+                    () -> applications.handleChat(sender, e.getMessage()));
+            return;
+        }
+        e.getRecipients().removeIf(applications::isApplying);
     }
 }

@@ -34,6 +34,7 @@ public final class ApplicationsStorage {
                         w.write("pending: {}\n");
                         w.write("awaiting_review: []\n");
                         w.write("denied: {}\n");
+                        w.write("denied_names: {}\n");
                     }
                 }
             } catch (IOException e) {
@@ -50,18 +51,23 @@ public final class ApplicationsStorage {
             root.putIfAbsent("pending", new LinkedHashMap<>());
             root.putIfAbsent("awaiting_review", new ArrayList<>());
             root.putIfAbsent("denied", new LinkedHashMap<>());
+            root.putIfAbsent("denied_names", new LinkedHashMap<>());
         } catch (IOException e) {
             plugin.getLogger().warning("Failed reading applications.yml: " + e.getMessage());
             root = new LinkedHashMap<>();
             root.put("pending", new LinkedHashMap<>());
             root.put("awaiting_review", new ArrayList<>());
             root.put("denied", new LinkedHashMap<>());
+            root.put("denied_names", new LinkedHashMap<>());
         }
     }
 
     public synchronized void save() {
         try (var w = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
-            yaml.dump(root, w);
+            w.write("# Pending applications file\n");
+            org.yaml.snakeyaml.DumperOptions opts = new org.yaml.snakeyaml.DumperOptions();
+            opts.setDefaultFlowStyle(org.yaml.snakeyaml.DumperOptions.FlowStyle.BLOCK);
+            new Yaml(opts).dump(root, w);
         } catch (IOException e) {
             plugin.getLogger().warning("Failed saving applications.yml: " + e.getMessage());
         }
@@ -116,9 +122,11 @@ public final class ApplicationsStorage {
         save();
     }
 
-    public synchronized void markDenied(UUID uuid) {
+    public synchronized void markDenied(UUID uuid, String name) {
         Map<String, Object> denied = (Map<String, Object>) root.get("denied");
         denied.put(uuid.toString(), Boolean.TRUE);
+        Map<String, Object> deniedNames = (Map<String, Object>) root.get("denied_names");
+        deniedNames.put(uuid.toString(), name);
         save();
     }
 
@@ -127,12 +135,43 @@ public final class ApplicationsStorage {
         return Boolean.TRUE.equals(denied.get(uuid.toString()));
     }
 
-    public synchronized int awaitingCount() {
-        List<String> awaiting = (List<String>) root.get("awaiting_review");
-        return awaiting.size();
+    public synchronized void clearDenied(UUID uuid) {
+        Map<String, Object> denied = (Map<String, Object>) root.get("denied");
+        Map<String, Object> deniedNames = (Map<String, Object>) root.get("denied_names");
+        denied.remove(uuid.toString());
+        deniedNames.remove(uuid.toString());
+        save();
     }
 
+    public synchronized UUID findDeniedUuidByName(String name) {
+        Map<String, Object> deniedNames = (Map<String, Object>) root.get("denied_names");
+        for (var e : deniedNames.entrySet()) {
+            if (name.equalsIgnoreCase(String.valueOf(e.getValue()))) {
+                try {
+                    return UUID.fromString(e.getKey());
+                } catch (IllegalArgumentException ignored) {}
+            }
+        }
+        return null;
+    }
+
+    public synchronized List<String> listDeniedNames() {
+        Map<String, Object> deniedNames = (Map<String, Object>) root.get("denied_names");
+        List<String> names = new ArrayList<>();
+        for (var e : deniedNames.entrySet()) {
+            names.add(String.valueOf(e.getValue()));
+        }
+        return names;
+    }
+
+    // === Added for ApplicationService.maybePromptOpsOnJoin ===
     public synchronized boolean hasAwaiting() {
-        return awaitingCount() > 0;
+        List<String> awaiting = (List<String>) root.get("awaiting_review");
+        return awaiting != null && !awaiting.isEmpty();
+    }
+
+    public synchronized int awaitingCount() {
+        List<String> awaiting = (List<String>) root.get("awaiting_review");
+        return awaiting == null ? 0 : awaiting.size();
     }
 }

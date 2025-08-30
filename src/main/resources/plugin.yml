@@ -21,6 +21,10 @@ commands:
     description: Deny a player's application
     usage: /applydeny <player>
     permission: fendoris.verify.admin
+  applyreset:
+    description: Reset a player's denied status so they can reapply
+    usage: /applyreset <player>
+    permission: fendoris.verify.admin
   unverify:
     description: Set a player to unverified
     permission: fendoris.verify.admin

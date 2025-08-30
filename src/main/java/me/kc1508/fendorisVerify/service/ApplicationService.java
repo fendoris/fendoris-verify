@@ -34,6 +34,8 @@ public final class ApplicationService {
     public boolean isApplying(Player p) { return sessions.containsKey(p.getUniqueId()); }
     public boolean hasReviewSession(Player op) { return reviewIndex.containsKey(op.getUniqueId()); }
 
+    public void abortIfApplying(Player p) { sessions.remove(p.getUniqueId()); }
+
     public boolean startApplication(Player p) {
         if (verifyService.isVerified(p)) { messages.send(p, "apply_already_verified"); return false; }
         if (!canApply(p)) { messages.send(p, "apply_must_view_rules_first"); return false; }
@@ -41,6 +43,7 @@ public final class ApplicationService {
         if (storage.hasPending(id)) { messages.send(p, "apply_already_submitted"); return false; }
         if (storage.isDenied(id)) { messages.send(p, "apply_denied_cannot_resubmit"); return false; }
         sessions.put(id, new Session());
+        messages.send(p, "apply_nav"); // once
         sendPrompt(p);
         return true;
     }
@@ -64,6 +67,7 @@ public final class ApplicationService {
         String t = msg.trim();
         if (t.equalsIgnoreCase("stop") || t.equalsIgnoreCase("cancel")) { cancelApplication(p); return; }
         if (t.equalsIgnoreCase("last")) { goBack(p); return; }
+        // treat everything else as answer
         s.answers[s.idx] = msg;
         s.idx++;
         if (s.idx >= TOTAL_QUESTIONS) {
@@ -95,7 +99,6 @@ public final class ApplicationService {
             case 3 -> messages.send(p, "apply_q4");
             case 4 -> messages.send(p, "apply_q5");
         }
-        messages.send(p, "apply_nav");
     }
 
     public void sendApplicationToOperator(Player op, UUID applicant) {
@@ -120,7 +123,6 @@ public final class ApplicationService {
     }
 
     public void accept(String playerName) {
-        // Try to resolve from pending first
         List<Map<String, Object>> pending = storage.listPendingOrdered();
         UUID target = null;
         for (Map<String, Object> e : pending) {
@@ -132,7 +134,6 @@ public final class ApplicationService {
         if (target != null) {
             storage.removePending(target);
         }
-        // Accept regardless of pending presence
         verifyService.setVerified(playerName, true);
         Player p = Bukkit.getPlayerExact(playerName);
         if (p != null) {
@@ -140,6 +141,10 @@ public final class ApplicationService {
             verifyService.teleportToSpectatorSpawn(p);
             messages.send(p, "apply_accepted_player");
         }
+        Map<String, String> ph = new LinkedHashMap<>();
+        ph.put("player", playerName);
+        Bukkit.getOnlinePlayers().forEach(pl -> messages.send(pl, "apply_accepted_broadcast", ph));
+        Bukkit.getConsoleSender().sendMessage("[fendoris-verify] Accepted " + playerName);
     }
 
     public void deny(String playerName) {
@@ -155,7 +160,7 @@ public final class ApplicationService {
         }
         if (target == null) return;
         storage.removePending(target);
-        storage.markDenied(target);
+        storage.markDenied(target, playerName);
         Bukkit.getLogger().info("[fendoris-verify] Application denied for " + playerName + ": " + record);
         Player p = Bukkit.getPlayerExact(playerName);
         if (p != null) messages.send(p, "apply_denied_player");
