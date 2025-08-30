@@ -2,22 +2,19 @@ package me.kc1508.fendorisVerify.commands;
 
 import me.kc1508.fendorisVerify.service.ApplicationService;
 import me.kc1508.fendorisVerify.service.MessageService;
-import me.kc1508.fendorisVerify.service.VerifyService;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public final class VerifyCommand implements CommandExecutor {
-    private final VerifyService verify;
-    private final MessageService messages;
+public final class ApplyCommand implements CommandExecutor {
     private final ApplicationService applications;
+    private final MessageService messages;
 
-    public VerifyCommand(VerifyService verify, MessageService messages, ApplicationService applications) {
-        this.verify = verify;
-        this.messages = messages;
+    public ApplyCommand(ApplicationService applications, MessageService messages) {
         this.applications = applications;
+        this.messages = messages;
     }
 
     @Override
@@ -26,10 +23,7 @@ public final class VerifyCommand implements CommandExecutor {
             messages.send(sender, "not_player");
             return true;
         }
-
-        messages.send(p, verify.isVerified(p) ? "verify_already" : "verify_info");
-        messages.send(p, "verify_next_section");
-        applications.markSeenRules(p);
+        applications.startApplication(p);
         return true;
     }
 }

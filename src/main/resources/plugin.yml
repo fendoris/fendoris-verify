@@ -5,9 +5,22 @@ api-version: '1.21'
 
 commands:
   verify:
-    description: Verify yourself
-    usage: /verify or /verify me
+    description: View rules and proceed to application
     permission: fendoris.verify.use
+  apply:
+    description: Submit a verification application
+    permission: fendoris.verify.use
+  applyseeoffline:
+    description: Review pending applications submitted while no operators were online
+    permission: fendoris.verify.admin
+  applyaccept:
+    description: Accept a player's application
+    usage: /applyaccept <player>
+    permission: fendoris.verify.admin
+  applydeny:
+    description: Deny a player's application
+    usage: /applydeny <player>
+    permission: fendoris.verify.admin
   unverify:
     description: Set a player to unverified
     permission: fendoris.verify.admin

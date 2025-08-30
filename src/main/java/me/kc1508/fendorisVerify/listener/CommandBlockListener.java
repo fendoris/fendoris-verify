@@ -19,11 +19,8 @@ public final class CommandBlockListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCommand(PlayerCommandPreprocessEvent e) {
         if (verify.isVerified(e.getPlayer())) return;
-
         String msg = e.getMessage().trim().toLowerCase();
-        if (msg.equals("/verify") || msg.equals("/verify me")) {
-            return;
-        }
+        if (msg.equals("/verify") || msg.equals("/apply")) return;
         e.setCancelled(true);
         messages.send(e.getPlayer(), "commands_blocked");
     }

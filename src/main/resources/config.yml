@@ -1,58 +1,63 @@
-# =========================================================
-#  Fendoris Verify Configuration
-#  Repo: https://github.com/fendoris
-#  MiniMessage playground: https://webui.advntr.dev/
-# =========================================================
+# fendoris-verify configuration
 
-spectator-radius: 100
+spectator-radius: 0
 
 spectator-spawn:
-  world: world
+  world: "world"
   x: 0.0
   y: 100.0
   z: 0.0
   yaw: 90.0
   pitch: 0.0
 
-# Message Configuration
 messages:
-  unverified_join: |-
-    <reset>
-    <b><gold>You cannot play Survival Mode until verified!</gold></b>
-    <gray><click:run_command:'/verify'><hover:show_text:'(Click) /verify'>Click here to see server rules, or you can run /verify.</hover></click></gray>
-    <reset>
-  verify_already: You are already verified.
-  verify_info: |-
-    <reset>
-    <gray>Take a minute to read over our Community Information and Server Rules before continuing:</gray>
-    <reset>
-    <gray>We are a <white><hover:show_text:'fendoris.com'><click:open_url:'https://fendoris.com/'>Survival Multiplayer Server</click></hover></white> compatible with both Java and Bedrock clients. Our Server in of its entirety, including plugin dependencies, are all Open Source on the Official <click:open_url:'https://github.com/orgs/fendoris/repositories'><hover:show_text:'github.com/orgs/fendoris'><white>Fendoris GitHub Organization</white></hover></click>. We run 24/7/365 on a dedicated host in the United States with a focus on low-latency for American Players.</gray>
-    <reset>
-    <gray><white>-</white> Hold yourself to a basic standard of human decency by treating everyone with respect and kindness.</gray>
-    <gray><white>-</white> Under no circumstances may you 'grief' another players builds or items. Though this term is broad, it still applies even if you disagree. Ensure you have complete permission from any player who you are taking items from, etc.
-    <reset>
-    <i><gray>Accept and change to Survival: <click:run_command:'/verify me'><hover:show_text:'<gray>(Click) /verify me</gray>'>/verify me</hover></click></gray></i>
-    <reset>
-  verify_info_cooldown_text: <red>You can use that command in a few seconds.</red>
-  verify_incorrect: <red>Incorrect or incomplete verification sub-command.</red>
-  verify_cannot_reverify: <gray>You are already verified, time to play!</gray>
-  verify_success: <color:#45cf45>Verification complete - welcome to the server!</color>
-  spectate_blocked: <red>You cannot interact, spectate or teleport to players in the current Spectator mode. Please complete your verification to continue.</red>
-  unverify_done_operator: |-
-    <reset>
-    <gold>Set %target% unverified.</gold>
-    <gold>Their Last Location: %x% %y% %z% in %world%.</gold>
-    <reset>
-  unverify_notified_player: <red>You were verified by an Operator. They will reach out to you privately with more information. Your last coordinates were saved to their chat.</red>
-  unverify_not_found: <red>User %target% does not exist or has no verification record.</red>
-  unverify_usage: 'Usage: /unverify <username>'
-  spectator_boundary_hit: <red>You cannot leave the world spawn area until you verify.</red>
-  commands_blocked: <red>You cannot use that command until you verify.</red>
-  spawn_set: <gold>Spectator spawn set at %x% %y% %z% in %world%.</gold>
-  not_player: Only players can use this.
-  no_permission: <red>You do not have permission.</red>
-  reload_done: <gold>Fendoris Verify reloaded.</gold>
+  unverified_join: "<gray>You are <red>unverified</red>. Use <green>/verify</green> to read the rules and start the application.</gray>"
 
-# Cooldowns (in seconds)
-verify_info_cooldown: 3
-spectate_blocked_cooldown: 3
+  verify_info: "<yellow>Server rules:</yellow><newline><gray>1) Be respectful.<newline>2) No cheating.<newline>3) Follow staff instructions.</gray>"
+  verify_already: "<green>You are already verified.</green>"
+  verify_next_section: "<gray>Next Section:</gray> <green>/apply</green> to begin the short application."
+
+  apply_must_view_rules_first: "<red>You must run /verify first to view the rules.</red>"
+  apply_already_verified: "<green>You are already verified. No application needed.</green>"
+  apply_already_submitted: "<yellow>You already submitted an application. Please wait for review.</yellow>"
+  apply_denied_cannot_resubmit: "<red>Your previous application was denied. You cannot resubmit right now.</red>"
+
+  apply_q1: "<gray>Question 1:</gray> How old are you?"
+  apply_q2: "<gray>Question 2:</gray> What is your goal playing on our server?"
+  apply_q3: "<gray>Question 3:</gray> Do you understand the rules and agree to them?"
+  apply_q4: "<gray>Question 4:</gray> Have you ever been banned from a Minecraft Server before?"
+  apply_q5: "<gray>Question 5:</gray> Give us the password you read earlier. <i>Once entered your application will be submitted.</i>"
+  apply_nav: "<gray>Type your answer. Type <yellow>last</yellow> to go back, <red>stop</red> to cancel.</gray>"
+  apply_cancelled: "<yellow>Application cancelled.</yellow>"
+  apply_submitted: "<green>Application submitted. A staff member will review it shortly.</green>"
+  apply_no_ops_online: "<yellow>No operator is online. Your application was saved. A staff member will review it within 3 days.</yellow>"
+  apply_accepted_player: "<green>Your application was accepted. Welcome!</green>"
+  apply_denied_player: "<red>Your application was denied.</red>"
+
+  apply_format_header: "<gray>New application from <yellow>%player%</yellow>:</gray>"
+  apply_format_q1: "<gray>Age:</gray> <white>%q1%</white>"
+  apply_format_q2: "<gray>Goal:</gray> <white>%q2%</white>"
+  apply_format_q3: "<gray>Understands rules:</gray> <white>%q3%</white>"
+  apply_format_q4: "<gray>Banned before:</gray> <white>%q4%</white>"
+  apply_format_q5: "<gray>Password:</gray> <white>%q5%</white>"
+  apply_format_footer: "<gray>Use <green>/applyaccept %player%</green> or <red>/applydeny %player%</red>.</gray>"
+
+  apply_offline_prompt_to_op: "<yellow>There are <white>%count%</white> pending application(s). Run <green>/applyseeoffline</green> to review.</yellow>"
+  apply_review_next_hint: "<gray>Accept with <green>/applyaccept <player></green> or deny with <red>/applydeny <player></red>. Type <yellow>/applyseeoffline stop</yellow> to stop.</gray>"
+  apply_review_stopped: "<yellow>Review session stopped.</yellow>"
+  apply_review_finished: "<green>No more pending applications.</green>"
+
+  apply_accepted_operator: "<green>Accepted.</green>"
+  apply_deny_usage: "<gray>Usage:</gray> <yellow>/applydeny <player></yellow>"
+  apply_accept_usage: "<gray>Usage:</gray> <yellow>/applyaccept <player></yellow>"
+  apply_denied_operator: "<red>Denied.</red>"
+
+  unverify_done_operator: "<gray>Set <yellow>%target%</yellow> unverified. Last location: <white>%x% %y% %z%</white> in <white>%world%</white>.</gray>"
+  unverify_notified_player: "<red>You were set to unverified by an operator.</red>"
+  unverify_not_found: "<red>User <white>%target%</white> does not exist or has no verification record.</red>"
+  unverify_usage: "<gray>Usage:</gray> <yellow>/unverify &lt;username&gt;</yellow>"
+  commands_blocked: "<red>You cannot use that command until you verify.</red>"
+  spawn_set: "<gray>Spectator spawn set at <white>%x% %y% %z%</white> in <white>%world%</white>.</gray>"
+  not_player: "<red>Only players can use this.</red>"
+  no_permission: "<red>You do not have permission.</red>"
+  reload_done: "<green>fendoris-verify reloaded.</green>"
