@@ -1,0 +1,25 @@
+name: fendoris-verify
+version: '1.0-SNAPSHOT'
+main: me.kc1508.fendorisVerify.FendorisVerify
+api-version: '1.21'
+
+commands:
+  verify:
+    description: Verify yourself
+    usage: /verify or /verify me
+    permission: fendoris.verify.use
+  unverify:
+    description: Set a player to unverified
+    permission: fendoris.verify.admin
+  setspectatorspawnpoint:
+    description: Set spectator spawn point
+    permission: fendoris.verify.admin
+  fendorisverifyreload:
+    description: Reload fendoris-verify config and storage
+    permission: fendoris.verify.admin
+
+permissions:
+  fendoris.verify.use:
+    default: true
+  fendoris.verify.admin:
+    default: op

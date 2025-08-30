@@ -1,0 +1,37 @@
+# fendoris-verify configuration
+
+spectator-radius: 100
+
+spectator-spawn:
+  world: "world"
+  x: 0.0
+  y: 100.0
+  z: 0.0
+  yaw: 90.0
+  pitch: 0.0
+
+messages:
+  # Sent to unverified players on join
+  unverified_join: "<gray>You are <red>unverified</red> and cannot play yet. Use <green>/verify</green> to see instructions.</gray>"
+  # Shown when running /verify with no args
+  verify_info: "<yellow>Server rules and verification steps:</yellow><newline><gray>1) Read the rules.<newline>2) Run <green>/verify me</green> to confirm.</gray>"
+  # Shown when /verify subcommand is incorrect
+  verify_incorrect: "<red>Incorrect verification. Use <green>/verify me</green>.</red>"
+  # Shown when /verify me succeeds
+  verify_success: "<green>Verification complete.</green> You may now play."
+  # Operator message after unverifying someone. Placeholders: %target%, %x%, %y%, %z%, %world%
+  unverify_done_operator: "<gray>Set <yellow>%target%</yellow> unverified. Last location: <white>%x% %y% %z%</white> in <white>%world%</white>.</gray>"
+  # Message to the target when unverified by operator
+  unverify_notified_player: "<red>You were set to unverified by an operator.</red>"
+  # Sent when an unverified player hits the confinement boundary
+  spectator_boundary_hit: "<red>You cannot leave this area until you verify.</red>"
+  # Sent when an unverified player tries any command other than /verify or /verify me
+  commands_blocked: "<red>You cannot use that command until you verify.</red>"
+  # Sent after /setspectatorspawnpoint
+  spawn_set: "<gray>Spectator spawn set at <white>%x% %y% %z%</white> in <white>%world%</white>.</gray>"
+  # Not a player
+  not_player: "<red>Only players can use this.</red>"
+  # Generic no-permission
+  no_permission: "<red>You do not have permission.</red>"
+  # Reload complete
+  reload_done: "<green>fendoris-verify reloaded.</green>"
