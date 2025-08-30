@@ -44,4 +44,12 @@ public final class ConfigService {
     public void reload() {
         plugin.reloadConfig();
     }
+
+    public int spectateBlockedCooldownSeconds() {
+        return plugin.getConfig().getInt("spectate_blocked_cooldown", 3);
+    }
+
+    public int verifyInfoCooldownSeconds() {
+        return plugin.getConfig().getInt("verify_info_cooldown", 3);
+    }
 }
