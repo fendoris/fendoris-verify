@@ -12,6 +12,7 @@ import me.kc1508.fendorisVerify.service.ConfigService;
 import me.kc1508.fendorisVerify.service.MessageService;
 import me.kc1508.fendorisVerify.service.VerifyService;
 import me.kc1508.fendorisVerify.store.VerifyStorage;
+import me.kc1508.fendorisVerify.listener.SpectateGuardListener;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -79,6 +80,7 @@ public final class FendorisVerify extends JavaPlugin {
         pm.registerEvents(new MoveLimitListener(configService, verifyService, messages), this);
         pm.registerEvents(new CommandBlockListener(verifyService, messages), this);
         pm.registerEvents(new GameModeGuardListener(verifyService), this);
+        pm.registerEvents(new SpectateGuardListener(verifyService, messages), this);
     }
 
     @Override

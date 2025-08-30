@@ -1,9 +1,13 @@
-# fendoris-verify configuration
+# =========================================================
+#  Fendoris Verify Configuration
+#  Repo: https://github.com/fendoris
+#  MiniMessage playground: https://webui.advntr.dev/
+# =========================================================
 
 spectator-radius: 100
 
 spectator-spawn:
-  world: "world"
+  world: world
   x: 0.0
   y: 100.0
   z: 0.0
@@ -11,20 +15,38 @@ spectator-spawn:
   pitch: 0.0
 
 messages:
-  unverified_join: "You are unverified and cannot play yet.\nUse /verify to see instructions."
-  verify_already: "You are already verified."
-  verify_info: "Server rules and verification steps:\n1) Read the rules.\n2) Run /verify me to confirm."
-  verify_incorrect: "Incorrect verification. Use /verify me."
-  verify_cannot_reverify: "You are already verified. No action needed."
-  verify_success: "Verification complete. You may now play."
-  spectate_blocked: "You cannot spectate or teleport to players until you verify."
-  unverify_done_operator: "Set %target% unverified.\nLast location: %x% %y% %z% in %world%."
-  unverify_notified_player: "You were set to unverified by an operator."
-  unverify_not_found: "User %target% does not exist or has no verification record."
-  unverify_usage: "Usage: /unverify <username>"
-  spectator_boundary_hit: "You cannot leave this area until you verify."
-  commands_blocked: "You cannot use that command until you verify."
-  spawn_set: "Spectator spawn set at %x% %y% %z% in %world%."
-  not_player: "Only players can use this."
-  no_permission: "You do not have permission."
-  reload_done: "fendoris-verify reloaded."
+  unverified_join: |-
+    <reset>
+    <b><gold>You cannot play Survival Mode until verified!</gold></b>
+    <gray><click:run_command:'/verify'><hover:show_text:'(Click) /verify'>Click here to see server rules, or you can run /verify.</hover></click></gray>
+    <reset>
+  verify_already: You are already verified.
+  verify_info: |-
+    <reset>
+    <gray>Take a minute to read over our Community Information and Server Rules before continuing:</gray>
+    <reset>
+    <gray>We are a <white><hover:show_text:'fendoris.com'><click:open_url:'https://fendoris.com/'>Survival Multiplayer Server</click></hover></white> compatible with both Java and Bedrock clients. Our Server in of its entirety, including plugin dependencies, are all Open Source on the Official <click:open_url:'https://github.com/orgs/fendoris/repositories'><hover:show_text:'github.com/orgs/fendoris'><white>Fendoris GitHub Organization</white></hover></click>. We run 24/7/365 on a dedicated host in the United States with a focus on low-latency for American Players.</gray>
+    <reset>
+    <gray><white>-</white> Hold yourself to a basic standard of human decency by treating everyone with respect and kindness.</gray>
+    <gray><white>-</white> Under no circumstances may you 'grief' another players builds or items. Though this term is broad, it still applies even if you disagree. Ensure you have complete permission from any player who you are taking items from, etc.
+    <reset>
+    <i><gray>Accept and change to Survival: <click:run_command:'/verify me'><hover:show_text:'<gray>(Click) /verify me</gray>'>/verify me</hover></click></gray></i>
+    <reset>
+  verify_incorrect: <red>Incorrect or incomplete verification sub-command.</red>
+  verify_cannot_reverify: <gray>You are already verified, time to play!</gray>
+  verify_success: <color:#45cf45>Verification complete - welcome to the server!</color>
+  spectate_blocked: <red>You cannot interact, spectate or teleport to players in the current Spectator mode. Please complete your verification to continue.</red>
+  unverify_done_operator: |-
+    <reset>
+    <gold>Set %target% unverified.</gold>
+    <gold>Their Last Location: %x% %y% %z% in %world%.</gold>
+    <reset>
+  unverify_notified_player: <red>You were verified by an Operator. They will reach out to you privately with more information. Your last coordinates were saved to their chat.</red>
+  unverify_not_found: <red>User %target% does not exist or has no verification record.</red>
+  unverify_usage: 'Usage: /unverify <username>'
+  spectator_boundary_hit: <red>You cannot leave the world spawn area until you verify.</red>
+  commands_blocked: <red>You cannot use that command until you verify.</red>
+  spawn_set: <gold>Spectator spawn set at %x% %y% %z% in %world%.</gold>
+  not_player: Only players can use this.
+  no_permission: <red>You do not have permission.</red>
+  reload_done: <gold>Fendoris Verify reloaded.</gold>
