@@ -25,16 +25,26 @@ public final class VerifyCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            messages.send(p, "verify_info");
+            if (verify.isVerified(p)) {
+                messages.send(p, "verify_already");
+            } else {
+                messages.send(p, "verify_info");
+            }
             return true;
         }
+
         if (args.length == 1 && args[0].equalsIgnoreCase("me")) {
+            if (verify.isVerified(p)) {
+                messages.send(p, "verify_cannot_reverify");
+                return true;
+            }
             verify.setVerified(p, true);
             messages.send(p, "verify_success");
             verify.enforceState(p);
             verify.teleportToSpectatorSpawn(p);
             return true;
         }
+
         messages.send(p, "verify_incorrect");
         return true;
     }

@@ -11,31 +11,20 @@ spectator-spawn:
   pitch: 0.0
 
 messages:
-  # Sent to unverified players on join (delayed ~1 tick to reduce overlap)
-  unverified_join: "<gray>You are <red>unverified</red> and cannot play yet. Use <green>/verify</green> to see instructions.</gray>"
-  # Shown when running /verify with no args
-  verify_info: "<yellow>Server rules and verification steps:</yellow><newline><gray>1) Read the rules.<newline>2) Run <green>/verify me</green> to confirm.</gray>"
-  # Shown when /verify subcommand is incorrect
-  verify_incorrect: "<red>Incorrect verification. Use <green>/verify me</green>.</red>"
-  # Shown when /verify me succeeds
-  verify_success: "<green>Verification complete.</green> You may now play."
-  # Operator message after unverifying someone. Placeholders: %target%, %x%, %y%, %z%, %world%
-  unverify_done_operator: "<gray>Set <yellow>%target%</yellow> unverified. Last location: <white>%x% %y% %z%</white> in <white>%world%</white>.</gray>"
-  # Message to the target when unverified by operator
-  unverify_notified_player: "<red>You were set to unverified by an operator.</red>"
-  # When trying to unverify an offline player without a record
-  unverify_not_found: "<red>User <white>%target%</white> does not exist or has no verification record.</red>"
-  # Usage help for /unverify
-  unverify_usage: "<gray>Usage:</gray> <yellow>/unverify &lt;username&gt;</yellow>"
-  # Sent when an unverified player hits the confinement boundary
-  spectator_boundary_hit: "<red>You cannot leave this area until you verify.</red>"
-  # Sent when an unverified player tries any command other than /verify or /verify me
-  commands_blocked: "<red>You cannot use that command until you verify.</red>"
-  # Sent after /setspectatorspawnpoint
-  spawn_set: "<gray>Spectator spawn set at <white>%x% %y% %z%</white> in <white>%world%</white>.</gray>"
-  # Not a player
-  not_player: "<red>Only players can use this.</red>"
-  # Generic no-permission
-  no_permission: "<red>You do not have permission.</red>"
-  # Reload complete
-  reload_done: "<green>fendoris-verify reloaded.</green>"
+  unverified_join: "You are unverified and cannot play yet.\nUse /verify to see instructions."
+  verify_already: "You are already verified."
+  verify_info: "Server rules and verification steps:\n1) Read the rules.\n2) Run /verify me to confirm."
+  verify_incorrect: "Incorrect verification. Use /verify me."
+  verify_cannot_reverify: "You are already verified. No action needed."
+  verify_success: "Verification complete. You may now play."
+  spectate_blocked: "You cannot spectate or teleport to players until you verify."
+  unverify_done_operator: "Set %target% unverified.\nLast location: %x% %y% %z% in %world%."
+  unverify_notified_player: "You were set to unverified by an operator."
+  unverify_not_found: "User %target% does not exist or has no verification record."
+  unverify_usage: "Usage: /unverify <username>"
+  spectator_boundary_hit: "You cannot leave this area until you verify."
+  commands_blocked: "You cannot use that command until you verify."
+  spawn_set: "Spectator spawn set at %x% %y% %z% in %world%."
+  not_player: "Only players can use this."
+  no_permission: "You do not have permission."
+  reload_done: "fendoris-verify reloaded."
