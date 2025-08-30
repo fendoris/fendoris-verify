@@ -73,12 +73,15 @@ public final class VerifyStorage {
         return data.getOrDefault(username.toLowerCase(Locale.ROOT), false);
     }
 
+    public synchronized boolean contains(String username) {
+        return data.containsKey(username.toLowerCase(Locale.ROOT));
+    }
+
     public synchronized void setVerified(String username, boolean verified) {
         data.put(username.toLowerCase(Locale.ROOT), verified);
         save();
     }
 
-    // Helper: extract map normalization
     private Map<String, Boolean> normalize(Map<?, ?> raw) {
         Map<String, Boolean> tmp = new LinkedHashMap<>();
         for (var e : raw.entrySet()) {

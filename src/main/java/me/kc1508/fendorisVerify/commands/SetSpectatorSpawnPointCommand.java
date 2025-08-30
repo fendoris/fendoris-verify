@@ -15,7 +15,7 @@ public final class SetSpectatorSpawnPointCommand implements CommandExecutor {
     private final ConfigService config;
     private final MessageService messages;
 
-    public SetSpectatorSpawnPointCommand(org.bukkit.plugin.java.JavaPlugin plugin, ConfigService config, MessageService messages) {
+    public SetSpectatorSpawnPointCommand(ConfigService config, MessageService messages) {
         this.config = config;
         this.messages = messages;
     }

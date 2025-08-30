@@ -10,7 +10,7 @@ public final class VerifyService {
     private final ConfigService config;
     private final MessageService messages;
 
-    public VerifyService(org.bukkit.plugin.java.JavaPlugin plugin, VerifyStorage storage, ConfigService config, MessageService messages) {
+    public VerifyService(VerifyStorage storage, ConfigService config, MessageService messages) {
         this.storage = storage;
         this.config = config;
         this.messages = messages;
@@ -20,8 +20,16 @@ public final class VerifyService {
         return storage.isVerified(p.getName());
     }
 
+    public boolean hasStoredRecord(String username) {
+        return storage.contains(username);
+    }
+
     public void setVerified(Player p, boolean verified) {
         storage.setVerified(p.getName(), verified);
+    }
+
+    public void setVerified(String username, boolean verified) {
+        storage.setVerified(username, verified);
     }
 
     public void enforceState(Player p) {
@@ -52,9 +60,5 @@ public final class VerifyService {
         if (spawn != null) {
             p.teleport(spawn);
         }
-    }
-
-    public void setVerified(String username, boolean verified) {
-        storage.setVerified(username, verified);
     }
 }

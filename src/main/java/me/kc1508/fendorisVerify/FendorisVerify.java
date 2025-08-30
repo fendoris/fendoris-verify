@@ -31,7 +31,7 @@ public final class FendorisVerify extends JavaPlugin {
         this.configService = new ConfigService(this);
         this.messages = new MessageService(this);
         this.storage = new VerifyStorage(this);
-        this.verifyService = new VerifyService(this, storage, configService, messages);
+        this.verifyService = new VerifyService(storage, configService, messages);
 
         registerCommands();
         registerListeners();
@@ -42,12 +42,11 @@ public final class FendorisVerify extends JavaPlugin {
     }
 
     private void registerCommands() {
-        // /verify (executor + tab)
-        VerifyCommand verifyCmd = new VerifyCommand(this, verifyService, messages);
+        // /verify (executor only; no tab-complete for "me")
+        VerifyCommand verifyCmd = new VerifyCommand(verifyService, messages);
         PluginCommand verify = getCommand("verify");
         if (verify != null) {
             verify.setExecutor(verifyCmd);
-            verify.setTabCompleter(verifyCmd);
         } else {
             getLogger().severe("Command 'verify' missing from plugin.yml");
         }
@@ -55,7 +54,7 @@ public final class FendorisVerify extends JavaPlugin {
         // /unverify
         PluginCommand unverify = getCommand("unverify");
         if (unverify != null) {
-            unverify.setExecutor(new UnverifyCommand(this, verifyService, messages));
+            unverify.setExecutor(new UnverifyCommand(verifyService, messages));
         } else {
             getLogger().severe("Command 'unverify' missing from plugin.yml");
         }
@@ -63,7 +62,7 @@ public final class FendorisVerify extends JavaPlugin {
         // /setspectatorspawnpoint
         PluginCommand setSpawn = getCommand("setspectatorspawnpoint");
         if (setSpawn != null) {
-            setSpawn.setExecutor(new SetSpectatorSpawnPointCommand(this, configService, messages));
+            setSpawn.setExecutor(new SetSpectatorSpawnPointCommand(configService, messages));
         } else {
             getLogger().severe("Command 'setspectatorspawnpoint' missing from plugin.yml");
         }
@@ -71,7 +70,7 @@ public final class FendorisVerify extends JavaPlugin {
         // /fendorisverifyreload
         PluginCommand reload = getCommand("fendorisverifyreload");
         if (reload != null) {
-            reload.setExecutor(new ReloadCommand(this, configService, storage, verifyService, messages));
+            reload.setExecutor(new ReloadCommand(configService, storage, verifyService, messages));
         } else {
             getLogger().severe("Command 'fendorisverifyreload' missing from plugin.yml");
         }
@@ -79,7 +78,7 @@ public final class FendorisVerify extends JavaPlugin {
 
     private void registerListeners() {
         var pm = getServer().getPluginManager();
-        pm.registerEvents(new JoinListener(verifyService, messages), this);
+        pm.registerEvents(new JoinListener(this, verifyService, messages), this);
         pm.registerEvents(new MoveLimitListener(configService, verifyService, messages), this);
         pm.registerEvents(new CommandBlockListener(verifyService, messages), this);
         pm.registerEvents(new GameModeGuardListener(verifyService), this);

@@ -16,7 +16,7 @@ public final class UnverifyCommand implements CommandExecutor {
     private final VerifyService verify;
     private final MessageService messages;
 
-    public UnverifyCommand(org.bukkit.plugin.java.JavaPlugin plugin, VerifyService verify, MessageService messages) {
+    public UnverifyCommand(VerifyService verify, MessageService messages) {
         this.verify = verify;
         this.messages = messages;
     }
@@ -49,6 +49,12 @@ public final class UnverifyCommand implements CommandExecutor {
             messages.send(sender, "unverify_done_operator", ph);
             messages.send(target, "unverify_notified_player");
         } else {
+            if (!verify.hasStoredRecord(targetName)) {
+                var phNF = new java.util.HashMap<String, String>();
+                phNF.put("target", targetName);
+                messages.send(sender, "unverify_not_found", phNF);
+                return true;
+            }
             verify.setVerified(targetName, false);
             var ph = new HashMap<String, String>();
             ph.put("target", targetName);

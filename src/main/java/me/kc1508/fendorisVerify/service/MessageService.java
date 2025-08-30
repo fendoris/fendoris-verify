@@ -3,7 +3,6 @@ package me.kc1508.fendorisVerify.service;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Map;
@@ -35,9 +34,5 @@ public final class MessageService {
         }
         Component c = mm.deserialize(raw);
         to.sendMessage(c);
-    }
-
-    public void sendPlayerOnly(Player p, String key) {
-        send(p, key);
     }
 }

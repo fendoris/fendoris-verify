@@ -17,7 +17,7 @@ public final class ReloadCommand implements CommandExecutor {
     private final VerifyService verify;
     private final MessageService messages;
 
-    public ReloadCommand(org.bukkit.plugin.java.JavaPlugin plugin, ConfigService config, VerifyStorage storage, VerifyService verify, MessageService messages) {
+    public ReloadCommand(ConfigService config, VerifyStorage storage, VerifyService verify, MessageService messages) {
         this.config = config;
         this.storage = storage;
         this.verify = verify;

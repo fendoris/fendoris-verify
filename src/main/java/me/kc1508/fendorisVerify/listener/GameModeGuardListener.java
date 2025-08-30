@@ -18,7 +18,6 @@ public final class GameModeGuardListener implements Listener {
     public void onGameModeChange(PlayerGameModeChangeEvent e) {
         if (verify.isVerified(e.getPlayer())) return;
         if (e.getPlayer().isOp()) return; // operator bypass
-        // Force Spectator if unverified
         if (e.getNewGameMode() != GameMode.SPECTATOR) {
             e.setCancelled(true);
         }

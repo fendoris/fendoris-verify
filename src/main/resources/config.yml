@@ -11,7 +11,7 @@ spectator-spawn:
   pitch: 0.0
 
 messages:
-  # Sent to unverified players on join
+  # Sent to unverified players on join (delayed ~1 tick to reduce overlap)
   unverified_join: "<gray>You are <red>unverified</red> and cannot play yet. Use <green>/verify</green> to see instructions.</gray>"
   # Shown when running /verify with no args
   verify_info: "<yellow>Server rules and verification steps:</yellow><newline><gray>1) Read the rules.<newline>2) Run <green>/verify me</green> to confirm.</gray>"
@@ -23,6 +23,10 @@ messages:
   unverify_done_operator: "<gray>Set <yellow>%target%</yellow> unverified. Last location: <white>%x% %y% %z%</white> in <white>%world%</white>.</gray>"
   # Message to the target when unverified by operator
   unverify_notified_player: "<red>You were set to unverified by an operator.</red>"
+  # When trying to unverify an offline player without a record
+  unverify_not_found: "<red>User <white>%target%</white> does not exist or has no verification record.</red>"
+  # Usage help for /unverify
+  unverify_usage: "<gray>Usage:</gray> <yellow>/unverify &lt;username&gt;</yellow>"
   # Sent when an unverified player hits the confinement boundary
   spectator_boundary_hit: "<red>You cannot leave this area until you verify.</red>"
   # Sent when an unverified player tries any command other than /verify or /verify me
