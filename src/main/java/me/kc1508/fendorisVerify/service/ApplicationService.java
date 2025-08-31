@@ -2,6 +2,7 @@ package me.kc1508.fendorisVerify.service;
 
 import me.kc1508.fendorisVerify.store.ApplicationsStorage;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -28,6 +29,15 @@ public final class ApplicationService {
         this.storage = storage;
         this.verifyService = verifyService;
         this.messages = messages;
+    }
+
+    // expose for listeners
+    public boolean consumeTeleportOnJoin(UUID uuid) {
+        return storage.consumeTeleportOnJoin(uuid);
+    }
+
+    public void markTeleportOnNextJoin(UUID uuid) {
+        storage.addTeleportOnJoin(uuid);
     }
 
     public void markSeenRules(Player p) {
@@ -69,7 +79,7 @@ public final class ApplicationService {
             return;
         }
         sessions.put(id, new Session());
-        messages.send(p, "apply_nav"); // once
+        messages.send(p, "apply_nav");
         sendPrompt(p);
     }
 
@@ -98,7 +108,6 @@ public final class ApplicationService {
             goBack(p);
             return;
         }
-        // treat everything else as answer
         s.answers[s.idx] = msg;
         s.idx++;
         if (s.idx >= TOTAL_QUESTIONS) {
@@ -112,10 +121,8 @@ public final class ApplicationService {
             storage.putPending(p.getUniqueId(), p.getName(), answers, System.currentTimeMillis(), !anyOpOnline);
             sessions.remove(p.getUniqueId());
             messages.send(p, anyOpOnline ? "apply_submitted" : "apply_no_ops_online");
-            if (anyOpOnline) {
-                for (Player op : Bukkit.getOnlinePlayers())
-                    if (op.isOp()) sendApplicationToOperator(op, p.getUniqueId());
-            }
+            if (anyOpOnline) for (Player op : Bukkit.getOnlinePlayers())
+                if (op.isOp()) sendApplicationToOperator(op, p.getUniqueId());
             return;
         }
         sendPrompt(p);
@@ -162,16 +169,25 @@ public final class ApplicationService {
                 break;
             }
         }
-        if (target != null) {
-            storage.removePending(target);
-        }
+        if (target != null) storage.removePending(target);
+
         verifyService.setVerified(playerName, true);
+
         Player p = Bukkit.getPlayerExact(playerName);
         if (p != null) {
             verifyService.enforceState(p);
             verifyService.teleportToSpectatorSpawn(p);
             messages.send(p, "apply_accepted_player");
+        } else {
+            // Offline accept: only flag if we can resolve a UUID from cache
+            UUID uuidForFlag = target;
+            if (uuidForFlag == null) {
+                OfflinePlayer off = Bukkit.getOfflinePlayerIfCached(playerName);
+                if (off != null) uuidForFlag = off.getUniqueId();
+            }
+            if (uuidForFlag != null) markTeleportOnNextJoin(uuidForFlag);
         }
+
         Map<String, String> ph = new LinkedHashMap<>();
         ph.put("player", playerName);
         Bukkit.getOnlinePlayers().forEach(pl -> messages.send(pl, "apply_accepted_broadcast", ph));

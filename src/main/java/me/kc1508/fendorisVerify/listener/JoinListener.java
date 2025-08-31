@@ -30,13 +30,16 @@ public final class JoinListener implements Listener {
             return;
         }
 
-        // Non-ops: ensure spectator if unverified and show message after a tick
         if (!verify.isVerified(e.getPlayer())) {
+            // Unverified: force spectator and info after a tick
             plugin.getServer().getScheduler().runTask(plugin, () -> verify.enforceState(e.getPlayer()));
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> messages.send(e.getPlayer(), "unverified_join"), 1L);
         } else {
-            // Verified: keep survival unless operator doing staff work
+            // Verified: enforce survival and handle deferred teleport-to-spawn if flagged
             verify.enforceState(e.getPlayer());
+            if (applications.consumeTeleportOnJoin(e.getPlayer().getUniqueId())) {
+                plugin.getServer().getScheduler().runTask(plugin, () -> verify.teleportToSpectatorSpawn(e.getPlayer()));
+            }
         }
 
         // Prompt ops for offline apps

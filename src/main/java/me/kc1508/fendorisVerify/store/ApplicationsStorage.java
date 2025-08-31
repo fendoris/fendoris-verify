@@ -35,6 +35,7 @@ public final class ApplicationsStorage {
                         w.write("awaiting_review: []\n");
                         w.write("denied: {}\n");
                         w.write("denied_names: {}\n");
+                        w.write("teleport_on_join: []\n");
                     }
                 }
             } catch (IOException e) {
@@ -52,6 +53,7 @@ public final class ApplicationsStorage {
             root.putIfAbsent("awaiting_review", new ArrayList<>());
             root.putIfAbsent("denied", new LinkedHashMap<>());
             root.putIfAbsent("denied_names", new LinkedHashMap<>());
+            root.putIfAbsent("teleport_on_join", new ArrayList<>());
         } catch (IOException e) {
             plugin.getLogger().warning("Failed reading applications.yml: " + e.getMessage());
             root = new LinkedHashMap<>();
@@ -59,6 +61,7 @@ public final class ApplicationsStorage {
             root.put("awaiting_review", new ArrayList<>());
             root.put("denied", new LinkedHashMap<>());
             root.put("denied_names", new LinkedHashMap<>());
+            root.put("teleport_on_join", new ArrayList<>());
         }
     }
 
@@ -163,7 +166,6 @@ public final class ApplicationsStorage {
         return names;
     }
 
-    // === Added for ApplicationService.maybePromptOpsOnJoin ===
     public synchronized boolean hasAwaiting() {
         List<String> awaiting = (List<String>) root.get("awaiting_review");
         return awaiting != null && !awaiting.isEmpty();
@@ -172,5 +174,21 @@ public final class ApplicationsStorage {
     public synchronized int awaitingCount() {
         List<String> awaiting = (List<String>) root.get("awaiting_review");
         return awaiting == null ? 0 : awaiting.size();
+    }
+
+    // === Teleport-on-next-join flag ===
+    public synchronized void addTeleportOnJoin(UUID uuid) {
+        List<String> list = (List<String>) root.get("teleport_on_join");
+        if (!list.contains(uuid.toString())) {
+            list.add(uuid.toString());
+            save();
+        }
+    }
+
+    public synchronized boolean consumeTeleportOnJoin(UUID uuid) {
+        List<String> list = (List<String>) root.get("teleport_on_join");
+        boolean removed = list.remove(uuid.toString());
+        if (removed) save();
+        return removed;
     }
 }
