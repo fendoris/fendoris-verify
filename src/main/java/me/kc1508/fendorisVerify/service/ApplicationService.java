@@ -2,7 +2,6 @@ package me.kc1508.fendorisVerify.service;
 
 import me.kc1508.fendorisVerify.store.ApplicationsStorage;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -36,8 +35,8 @@ public final class ApplicationService {
         return storage.consumeTeleportOnJoin(uuid);
     }
 
-    public void markTeleportOnNextJoin(UUID uuid) {
-        storage.addTeleportOnJoin(uuid);
+    public String consumeNotifyOnJoin(UUID uuid) {
+        return storage.consumeNotifyOnJoin(uuid);
     }
 
     public void markSeenRules(Player p) {
@@ -179,13 +178,9 @@ public final class ApplicationService {
             verifyService.teleportToSpectatorSpawn(p);
             messages.send(p, "apply_accepted_player");
         } else {
-            // Offline accept: only flag if we can resolve a UUID from cache
-            UUID uuidForFlag = target;
-            if (uuidForFlag == null) {
-                OfflinePlayer off = Bukkit.getOfflinePlayerIfCached(playerName);
-                if (off != null) uuidForFlag = off.getUniqueId();
-            }
-            if (uuidForFlag != null) markTeleportOnNextJoin(uuidForFlag);
+            UUID id = (target != null) ? target : Bukkit.getOfflinePlayer(playerName).getUniqueId();
+            storage.addTeleportOnJoin(id);
+            storage.addNotifyOnJoin(id, "accepted");
         }
 
         Map<String, String> ph = new LinkedHashMap<>();
@@ -210,7 +205,11 @@ public final class ApplicationService {
         storage.markDenied(target, playerName);
         Bukkit.getConsoleSender().sendMessage("[fendoris-verify] Application denied for " + playerName + ": " + record);
         Player p = Bukkit.getPlayerExact(playerName);
-        if (p != null) messages.send(p, "apply_denied_player");
+        if (p != null) {
+            messages.send(p, "apply_denied_player");
+        } else {
+            storage.addNotifyOnJoin(target, "denied");
+        }
     }
 
     public void startReviewSession(Player op) {
@@ -241,9 +240,10 @@ public final class ApplicationService {
 
     public void maybePromptOpsOnJoin(Player op) {
         if (!op.isOp()) return;
-        if (storage.hasAwaiting()) {
+        int count = storage.pendingCount(); // prompt for any pending, not just "awaiting"
+        if (count > 0) {
             Map<String, String> ph = new LinkedHashMap<>();
-            ph.put("count", String.valueOf(storage.awaitingCount()));
+            ph.put("count", String.valueOf(count));
             messages.send(op, "apply_offline_prompt_to_op", ph);
         }
     }

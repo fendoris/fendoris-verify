@@ -31,18 +31,29 @@ public final class JoinListener implements Listener {
         }
 
         if (!verify.isVerified(e.getPlayer())) {
-            // Unverified: force spectator and info after a tick
-            plugin.getServer().getScheduler().runTask(plugin, () -> verify.enforceState(e.getPlayer()));
+            // Always reset position for unverified/denied when they rejoin
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                verify.enforceState(e.getPlayer());
+                verify.teleportToSpectatorSpawn(e.getPlayer());
+            });
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> messages.send(e.getPlayer(), "unverified_join"), 1L);
         } else {
-            // Verified: enforce survival and handle deferred teleport-to-spawn if flagged
+            // Verified: enforce survival and handle deferred teleport + notices
             verify.enforceState(e.getPlayer());
-            if (applications.consumeTeleportOnJoin(e.getPlayer().getUniqueId())) {
-                plugin.getServer().getScheduler().runTask(plugin, () -> verify.teleportToSpectatorSpawn(e.getPlayer()));
-            }
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                if (applications.consumeTeleportOnJoin(e.getPlayer().getUniqueId())) {
+                    verify.teleportToSpectatorSpawn(e.getPlayer());
+                }
+                String notice = applications.consumeNotifyOnJoin(e.getPlayer().getUniqueId());
+                if ("accepted".equalsIgnoreCase(notice)) {
+                    messages.send(e.getPlayer(), "apply_offline_accepted_notice");
+                } else if ("denied".equalsIgnoreCase(notice)) {
+                    messages.send(e.getPlayer(), "apply_offline_denied_notice");
+                }
+            });
         }
 
-        // Prompt ops for offline apps
+        // Prompt ops for any pending applications
         applications.maybePromptOpsOnJoin(e.getPlayer());
     }
 }

@@ -30,12 +30,13 @@ public final class ApplicationsStorage {
             try {
                 if (file.createNewFile()) {
                     try (var w = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
-                        w.write("# Pending applications\n");
+                        w.write("# Applications store\n");
                         w.write("pending: {}\n");
                         w.write("awaiting_review: []\n");
                         w.write("denied: {}\n");
                         w.write("denied_names: {}\n");
                         w.write("teleport_on_join: []\n");
+                        w.write("notify_on_join: {}\n");
                     }
                 }
             } catch (IOException e) {
@@ -54,6 +55,7 @@ public final class ApplicationsStorage {
             root.putIfAbsent("denied", new LinkedHashMap<>());
             root.putIfAbsent("denied_names", new LinkedHashMap<>());
             root.putIfAbsent("teleport_on_join", new ArrayList<>());
+            root.putIfAbsent("notify_on_join", new LinkedHashMap<>());
         } catch (IOException e) {
             plugin.getLogger().warning("Failed reading applications.yml: " + e.getMessage());
             root = new LinkedHashMap<>();
@@ -62,12 +64,13 @@ public final class ApplicationsStorage {
             root.put("denied", new LinkedHashMap<>());
             root.put("denied_names", new LinkedHashMap<>());
             root.put("teleport_on_join", new ArrayList<>());
+            root.put("notify_on_join", new LinkedHashMap<>());
         }
     }
 
     public synchronized void save() {
         try (var w = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
-            w.write("# Pending applications file\n");
+            w.write("# Applications store\n");
             org.yaml.snakeyaml.DumperOptions opts = new org.yaml.snakeyaml.DumperOptions();
             opts.setDefaultFlowStyle(org.yaml.snakeyaml.DumperOptions.FlowStyle.BLOCK);
             new Yaml(opts).dump(root, w);
@@ -76,9 +79,15 @@ public final class ApplicationsStorage {
         }
     }
 
+    // Pending
     public synchronized boolean hasPending(UUID uuid) {
         Map<String, Object> pending = (Map<String, Object>) root.get("pending");
         return pending.containsKey(uuid.toString());
+    }
+
+    public synchronized int pendingCount() {
+        Map<String, Object> pending = (Map<String, Object>) root.get("pending");
+        return pending.size();
     }
 
     public synchronized void putPending(UUID uuid, String name, Map<String, String> answers, long submittedAt, boolean queueForOfflineReview) {
@@ -123,6 +132,7 @@ public final class ApplicationsStorage {
         save();
     }
 
+    // Denied
     public synchronized void markDenied(UUID uuid, String name) {
         Map<String, Object> denied = (Map<String, Object>) root.get("denied");
         denied.put(uuid.toString(), Boolean.TRUE);
@@ -160,23 +170,11 @@ public final class ApplicationsStorage {
     public synchronized List<String> listDeniedNames() {
         Map<String, Object> deniedNames = (Map<String, Object>) root.get("denied_names");
         List<String> names = new ArrayList<>();
-        for (var e : deniedNames.entrySet()) {
-            names.add(String.valueOf(e.getValue()));
-        }
+        for (var e : deniedNames.entrySet()) names.add(String.valueOf(e.getValue()));
         return names;
     }
 
-    public synchronized boolean hasAwaiting() {
-        List<String> awaiting = (List<String>) root.get("awaiting_review");
-        return awaiting != null && !awaiting.isEmpty();
-    }
-
-    public synchronized int awaitingCount() {
-        List<String> awaiting = (List<String>) root.get("awaiting_review");
-        return awaiting == null ? 0 : awaiting.size();
-    }
-
-    // === Teleport-on-next-join flag ===
+    // Teleport and notify on next join
     public synchronized void addTeleportOnJoin(UUID uuid) {
         List<String> list = (List<String>) root.get("teleport_on_join");
         if (!list.contains(uuid.toString())) {
@@ -190,5 +188,18 @@ public final class ApplicationsStorage {
         boolean removed = list.remove(uuid.toString());
         if (removed) save();
         return removed;
+    }
+
+    public synchronized void addNotifyOnJoin(UUID uuid, String status) {
+        Map<String, Object> m = (Map<String, Object>) root.get("notify_on_join");
+        m.put(uuid.toString(), status);
+        save();
+    }
+
+    public synchronized String consumeNotifyOnJoin(UUID uuid) {
+        Map<String, Object> m = (Map<String, Object>) root.get("notify_on_join");
+        Object val = m.remove(uuid.toString());
+        if (val != null) save();
+        return val == null ? null : String.valueOf(val);
     }
 }
