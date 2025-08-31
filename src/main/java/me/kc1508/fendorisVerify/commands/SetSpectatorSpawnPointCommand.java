@@ -26,7 +26,7 @@ public final class SetSpectatorSpawnPointCommand implements CommandExecutor {
             messages.send(sender, "not_player");
             return true;
         }
-        if (!sender.hasPermission("fendoris.verify.admin")) {
+        if (!sender.hasPermission("fendoris.verify.operator")) {
             messages.send(sender, "no_permission");
             return true;
         }

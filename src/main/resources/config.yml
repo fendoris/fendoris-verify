@@ -1,8 +1,5 @@
 # fendoris-verify configuration
 
-# Spectator confinement removed. Keep spawn to teleport on accept.
-spectator-radius: 0
-
 spectator-spawn:
   world: "world"
   x: 0.0

@@ -35,7 +35,7 @@ public final class JoinListener implements Listener {
             plugin.getServer().getScheduler().runTask(plugin, () -> verify.enforceState(e.getPlayer()));
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> messages.send(e.getPlayer(), "unverified_join"), 1L);
         } else {
-            // Verified: keep survival unless operator doing admin work
+            // Verified: keep survival unless operator doing staff work
             verify.enforceState(e.getPlayer());
         }
 

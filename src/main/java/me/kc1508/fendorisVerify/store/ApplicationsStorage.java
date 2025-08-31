@@ -73,8 +73,6 @@ public final class ApplicationsStorage {
         }
     }
 
-    public synchronized void reload() { load(); }
-
     public synchronized boolean hasPending(UUID uuid) {
         Map<String, Object> pending = (Map<String, Object>) root.get("pending");
         return pending.containsKey(uuid.toString());
@@ -149,7 +147,8 @@ public final class ApplicationsStorage {
             if (name.equalsIgnoreCase(String.valueOf(e.getValue()))) {
                 try {
                     return UUID.fromString(e.getKey());
-                } catch (IllegalArgumentException ignored) {}
+                } catch (IllegalArgumentException ignored) {
+                }
             }
         }
         return null;

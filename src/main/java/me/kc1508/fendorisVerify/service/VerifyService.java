@@ -8,12 +8,10 @@ import org.bukkit.entity.Player;
 public final class VerifyService {
     private final VerifyStorage storage;
     private final ConfigService config;
-    private final MessageService messages;
 
-    public VerifyService(VerifyStorage storage, ConfigService config, MessageService messages) {
+    public VerifyService(VerifyStorage storage, ConfigService config) {
         this.storage = storage;
         this.config = config;
-        this.messages = messages;
     }
 
     public boolean isVerified(Player p) {

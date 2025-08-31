@@ -26,7 +26,7 @@ public final class ReloadCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
-        if (!sender.hasPermission("fendoris.verify.admin")) {
+        if (!sender.hasPermission("fendoris.verify.operator")) {
             messages.send(sender, "no_permission");
             return true;
         }

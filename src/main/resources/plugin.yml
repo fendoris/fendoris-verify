@@ -12,31 +12,31 @@ commands:
     permission: fendoris.verify.use
   applyseeoffline:
     description: Review pending applications submitted while no operators were online
-    permission: fendoris.verify.admin
+    permission: fendoris.verify.operator
   applyaccept:
     description: Accept a player's application
     usage: /applyaccept <player>
-    permission: fendoris.verify.admin
+    permission: fendoris.verify.operator
   applydeny:
     description: Deny a player's application
     usage: /applydeny <player>
-    permission: fendoris.verify.admin
+    permission: fendoris.verify.operator
   applyreset:
     description: Reset a player's denied status so they can reapply
     usage: /applyreset <player>
-    permission: fendoris.verify.admin
+    permission: fendoris.verify.operator
   unverify:
     description: Set a player to unverified
-    permission: fendoris.verify.admin
+    permission: fendoris.verify.operator
   setspectatorspawnpoint:
     description: Set spectator spawn point
-    permission: fendoris.verify.admin
+    permission: fendoris.verify.operator
   fendorisverifyreload:
     description: Reload fendoris-verify config and storage
-    permission: fendoris.verify.admin
+    permission: fendoris.verify.operator
 
 permissions:
   fendoris.verify.use:
     default: true
-  fendoris.verify.admin:
+  fendoris.verify.operator:
     default: op

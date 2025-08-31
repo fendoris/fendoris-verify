@@ -26,8 +26,14 @@ public final class ApplyResetCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NotNull [] args) {
-        if (!sender.isOp()) { messages.send(sender, "no_permission"); return true; }
-        if (args.length != 1) { messages.send(sender, "apply_reset_usage"); return true; }
+        if (!sender.isOp()) {
+            messages.send(sender, "no_permission");
+            return true;
+        }
+        if (args.length != 1) {
+            messages.send(sender, "apply_reset_usage");
+            return true;
+        }
         String name = args[0];
         UUID id = storage.findDeniedUuidByName(name);
         if (id == null) {
@@ -40,10 +46,11 @@ public final class ApplyResetCommand implements CommandExecutor, TabCompleter {
         }
         storage.clearDenied(id);
         messages.send(sender, "apply_reset_done_operator");
-        OfflinePlayer target = Bukkit.getOfflinePlayer(id);
-        if (target != null && target.isOnline()) {
-            messages.send(target.getPlayer(), "apply_reset_done_player");
+        org.bukkit.entity.Player online = Bukkit.getPlayer(id);
+        if (online != null) {
+            messages.send(online, "apply_reset_done_player");
         }
+
         return true;
     }
 

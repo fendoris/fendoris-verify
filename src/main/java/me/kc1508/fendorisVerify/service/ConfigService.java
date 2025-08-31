@@ -13,10 +13,6 @@ public final class ConfigService {
         this.plugin = plugin;
     }
 
-    public int spectatorRadius() {
-        return plugin.getConfig().getInt("spectator-radius", 100);
-    }
-
     public Location spectatorSpawn() {
         ConfigurationSection sec = plugin.getConfig().getConfigurationSection("spectator-spawn");
         if (sec == null) return null;
@@ -45,11 +41,4 @@ public final class ConfigService {
         plugin.reloadConfig();
     }
 
-    public int spectateBlockedCooldownSeconds() {
-        return plugin.getConfig().getInt("spectate_blocked_cooldown", 3);
-    }
-
-    public int verifyInfoCooldownSeconds() {
-        return plugin.getConfig().getInt("verify_info_cooldown", 3);
-    }
 }
